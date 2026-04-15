@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bandingkan Bilangan</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Fredoka', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes wiggle {
+      0%,100% { transform: rotate(0deg); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(8deg); }
+    }
+    @keyframes popStar {
+      0% { transform: scale(0) rotate(0deg); opacity: 1; }
+      100% { transform: scale(1.5) rotate(180deg); opacity: 0; }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .bounce-in { animation: bounceIn 0.5s ease-out; }
+    .wiggle { animation: wiggle 0.4s ease-in-out; }
+    .float-anim { animation: float 2s ease-in-out infinite; }
+    .pop-star { animation: popStar 0.6s ease-out forwards; }
+
+    .btn-answer {
+      transition: all 0.15s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .btn-answer:hover { transform: scale(1.08); }
+    .btn-answer:active { transform: scale(0.95); }
+
+    .mode-btn { transition: all 0.2s ease; cursor: pointer; }
+    .mode-btn:hover { transform: translateY(-3px); }
+    .mode-btn.active { ring: 4px; }
+
+    .number-box {
+      min-width: 100px; min-height: 100px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 20px; font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .emoji-grid {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      justify-content: center; align-items: center;
+      max-width: 180px;
+    }
+
+    .result-overlay {
+      position: fixed; inset: 0; display: flex;
+      align-items: center; justify-content: center;
+      z-index: 50; pointer-events: none;
+    }
+    .result-overlay.show { pointer-events: auto; }
+
+    .confetti {
+      position: fixed; pointer-events: none; z-index: 100;
+      font-size: 24px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app" class="w-full min-h-full flex flex-col items-center" style="background: linear-gradient(135deg, #FFF3E0 0%, #E1F5FE 50%, #F3E5F5 100%);"><!-- Header -->
+   <header class="w-full text-center pt-6 pb-3 px-4">
+    <h1 id="title" class="text-3xl md:text-4xl font-bold drop-shadow-sm" style="color: #FF6B6B;">🌟 Bandingkan Bilangan 🌟</h1>
+    <p class="text-lg mt-1" style="color: #7E57C2;">Pilih tanda yang benar!</p>
+   </header><!-- Mode Selector -->
+   <div class="flex flex-wrap justify-center gap-3 px-4 mb-4"><button onclick="setMode('angka')" id="mode-angka" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#FF6B6B;"> 🔢 Angka </button> <button onclick="setMode('emoji')" id="mode-emoji" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#42A5F5;"> 😀 Emoji </button> <button onclick="setMode('kata')" id="mode-kata" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#66BB6A;"> 📝 Kata </button>
+   </div><!-- Score -->
+   <div class="flex gap-4 mb-4 text-lg font-semibold"><span class="px-4 py-1.5 rounded-full text-white shadow" style="background:#66BB6A;">✅ Benar: <span id="score-correct">0</span></span> <span class="px-4 py-1.5 rounded-full text-white shadow" style="background:#EF5350;">❌ Salah: <span id="score-wrong">0</span></span>
+   </div><!-- Question Area -->
+   <main class="flex-1 w-full max-w-xl px-4 flex flex-col items-center justify-center">
+    <div id="question-area" class="w-full bg-white rounded-3xl shadow-xl p-6 md:p-8 flex flex-col items-center gap-5 bounce-in" style="border: 4px solid #FFD54F;"><!-- Numbers Display -->
+     <div class="flex items-center justify-center gap-4 flex-wrap">
+      <div id="left-box" class="number-box text-5xl shadow-lg" style="background: linear-gradient(135deg, #FFCDD2, #EF9A9A); color: #C62828;">
+       5
+      </div>
+      <div class="text-5xl font-bold float-anim" style="color: #FFB300;">
+       ?
+      </div>
+      <div id="right-box" class="number-box text-5xl shadow-lg" style="background: linear-gradient(135deg, #B3E5FC, #81D4FA); color: #0277BD;">
+       3
+      </div>
+     </div><!-- Answer Buttons -->
+     <div class="flex gap-4 mt-2"><button onclick="answer('<')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #42A5F5, #1E88E5);"> &lt; </button> <button onclick="answer('=')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #FFA726, #FB8C00);"> = </button> <button onclick="answer('>')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #66BB6A, #43A047);"> &gt; </button>
+     </div>
+    </div><!-- Feedback Message -->
+    <div id="feedback" class="mt-5 text-center text-2xl font-bold min-h-[40px]" aria-live="polite"></div><!-- Next Button --> <button id="next-btn" onclick="newQuestion()" class="mt-3 mb-6 px-8 py-3 rounded-full text-xl font-bold text-white shadow-lg btn-answer hidden" style="background: linear-gradient(135deg, #AB47BC, #8E24AA);"> Soal Berikutnya ➡️ </button>
+   </main>
+  </div>
+  <script>
+  const defaultConfig = {
+    app_title: "Bandingkan Bilangan",
+    correct_message: "Hebat! Jawabanmu Benar! 🎉",
+    wrong_message: "Coba Lagi ya! 💪",
+    primary_color: "#FF6B6B",
+    surface_color: "#FFFFFF",
+    text_color: "#4A148C",
+    action_color: "#42A5F5",
+    accent_color: "#66BB6A"
+  };
+
+  let currentMode = 'angka';
+  let leftNum = 0, rightNum = 0;
+  let scoreCorrect = 0, scoreWrong = 0;
+  let answered = false;
+
+  const emojis = ['🍎','🌟','🐱','🌈','🎈','🐶','🍕','🦋','🌻','🐠'];
+  const numberWords = ['nol','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh',
+    'sebelas','dua belas','tiga belas','empat belas','lima belas','enam belas','tujuh belas','delapan belas','sembilan belas','dua puluh'];
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => {
+      b.style.outline = 'none';
+      b.style.outlineOffset = '0';
+    });
+    const active = document.getElementById('mode-' + mode);
+    active.style.outline = '4px solid #FFD54F';
+    active.style.outlineOffset = '3px';
+    newQuestion();
+  }
+
+  function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function renderEmojis(count) {
+    const emoji = emojis[rand(0, emojis.length - 1)];
+    let html = '<div class="emoji-grid">';
+    for (let i = 0; i < count; i++) {
+      html += `<span class="text-2xl">${emoji}</span>`;
+    }
+    html += '</div>';
+    if (count === 0) html = '<div class="text-2xl">( kosong )</div>';
+    return html;
+  }
+
+  function newQuestion() {
+    answered = false;
+    leftNum = rand(0, 20);
+    rightNum = rand(0, 20);
+
+    const leftBox = document.getElementById('left-box');
+    const rightBox = document.getElementById('right-box');
+
+    if (currentMode === 'angka') {
+      leftBox.innerHTML = leftNum;
+      leftBox.className = 'number-box text-5xl shadow-lg bounce-in';
+      rightBox.innerHTML = rightNum;
+      rightBox.className = 'number-box text-5xl shadow-lg bounce-in';
+    } else if (currentMode === 'emoji') {
+      const l = Math.min(leftNum, 10), r = Math.min(rightNum, 10);
+      leftNum = l; rightNum = r;
+      leftBox.innerHTML = renderEmojis(l);
+      leftBox.className = 'number-box shadow-lg bounce-in p-3';
+      rightBox.innerHTML = renderEmojis(r);
+      rightBox.className = 'number-box shadow-lg bounce-in p-3';
+    } else {
+      leftBox.innerHTML = `<span class="text-xl md:text-2xl text-center leading-tight px-2">${numberWords[leftNum]}</span>`;
+      leftBox.className = 'number-box shadow-lg bounce-in';
+      rightBox.innerHTML = `<span class="text-xl md:text-2xl text-center leading-tight px-2">${numberWords[rightNum]}</span>`;
+      rightBox.className = 'number-box shadow-lg bounce-in';
+    }
+
+    document.getElementById('feedback').innerHTML = '';
+    document.getElementById('next-btn').classList.add('hidden');
+  }
+
+  function getCorrectAnswer() {
+    if (leftNum < rightNum) return '<';
+    if (leftNum > rightNum) return '>';
+    return '=';
+  }
+
+  function spawnConfetti() {
+    const symbols = ['🌟','⭐','🎉','✨','💫','🎊','❤️','🌈'];
+    for (let i = 0; i < 12; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.textContent = symbols[rand(0, symbols.length - 1)];
+      el.style.left = rand(10, 90) + '%';
+      el.style.top = rand(10, 60) + '%';
+      el.style.animation = `popStar ${0.4 + Math.random() * 0.5}s ease-out forwards`;
+      el.style.animationDelay = (i * 0.05) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }
+  }
+
+  function answer(choice) {
+    if (answered) return;
+    answered = true;
+    const correct = getCorrectAnswer();
+    const cfg = window.elementSdk?.config || defaultConfig;
+    const fb = document.getElementById('feedback');
+
+    if (choice === correct) {
+      scoreCorrect++;
+      document.getElementById('score-correct').textContent = scoreCorrect;
+      fb.innerHTML = `<span style="color:#2E7D32;" class="bounce-in">${cfg.correct_message || defaultConfig.correct_message}</span>`;
+      spawnConfetti();
+    } else {
+      scoreWrong++;
+      document.getElementById('score-wrong').textContent = scoreWrong;
+      const symbol = correct === '<' ? '&lt;' : correct === '>' ? '&gt;' : '=';
+      fb.innerHTML = `<span style="color:#C62828;" class="wiggle">${cfg.wrong_message || defaultConfig.wrong_message}<br><span class="text-xl">Jawaban: ${leftNum} ${symbol} ${rightNum}</span></span>`;
+    }
+    document.getElementById('next-btn').classList.remove('hidden');
+  }
+
+  // Element SDK
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => {
+      const t = document.getElementById('title');
+      t.textContent = `🌟 ${config.app_title || defaultConfig.app_title} 🌟`;
+      t.style.color = config.primary_color || defaultConfig.primary_color;
+    },
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get: () => config.primary_color || defaultConfig.primary_color, set: v => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+        { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+        { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+        { get: () => config.action_color || defaultConfig.action_color, set: v => { config.action_color = v; window.elementSdk.setConfig({ action_color: v }); } },
+        { get: () => config.accent_color || defaultConfig.accent_color, set: v => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } }
+      ],
+      borderables: [],
+      fontEditable: undefined,
+      fontSizeable: undefined
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ["app_title", config.app_title || defaultConfig.app_title],
+      ["correct_message", config.correct_message || defaultConfig.correct_message],
+      ["wrong_message", config.wrong_message || defaultConfig.wrong_message]
+    ])
+  });
+
+  // Init
+  setMode('angka');
+  lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ec71dde934ab5b2',t:'MTc3NjIxNTkxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
