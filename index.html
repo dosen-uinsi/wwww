@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { font-family: 'Fredoka', sans-serif; }
     html, body { height: 100%; margin: 0; }
@@ -76,44 +76,60 @@
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full overflow-auto">
-  <div id="app" class="w-full min-h-full flex flex-col items-center" style="background: linear-gradient(135deg, #FFF3E0 0%, #E1F5FE 50%, #F3E5F5 100%);"><!-- Header -->
+  <div id="app" class="w-full min-h-full flex flex-col items-center" style="background: linear-gradient(135deg, #E0F2F1 0%, #FFF9C4 50%, #FFE082 100%);">
    <header class="w-full text-center pt-6 pb-3 px-4">
-    <h1 id="title" class="text-3xl md:text-4xl font-bold drop-shadow-sm" style="color: #FF6B6B;">🌟 Bandingkan Bilangan 🌟</h1>
-    <p class="text-lg mt-1" style="color: #7E57C2;">Pilih tanda yang benar!</p>
-   </header><!-- Mode Selector -->
-   <div class="flex flex-wrap justify-center gap-3 px-4 mb-4"><button onclick="setMode('angka')" id="mode-angka" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#FF6B6B;"> 🔢 Angka </button> <button onclick="setMode('emoji')" id="mode-emoji" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#42A5F5;"> 😀 Emoji </button> <button onclick="setMode('kata')" id="mode-kata" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#66BB6A;"> 📝 Kata </button>
-   </div><!-- Score -->
-   <div class="flex gap-4 mb-4 text-lg font-semibold"><span class="px-4 py-1.5 rounded-full text-white shadow" style="background:#66BB6A;">✅ Benar: <span id="score-correct">0</span></span> <span class="px-4 py-1.5 rounded-full text-white shadow" style="background:#EF5350;">❌ Salah: <span id="score-wrong">0</span></span>
-   </div><!-- Question Area -->
+    <h1 id="title" class="text-3xl md:text-4xl font-bold drop-shadow-sm" style="color: #E65100;">🌟 Bandingkan Bilangan 🌟</h1>
+    <p class="text-lg mt-1" style="color: #00695C;">Pilih tanda yang benar!</p>
+   </header>
+   
+   <div class="flex flex-wrap justify-center gap-3 px-4 mb-4">
+       <button onclick="setMode('angka')" id="mode-angka" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#00897B;"> 🔢 Angka </button> 
+       <button onclick="setMode('emoji')" id="mode-emoji" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#F4511E;"> 😀 Emoji </button> 
+       <button onclick="setMode('kata')" id="mode-kata" class="mode-btn px-5 py-2.5 rounded-full font-semibold text-white text-lg shadow-md" style="background:#8E24AA;"> 📝 Kata </button>
+   </div>
+   
+   <div class="flex gap-4 mb-4 text-lg font-semibold">
+       <span class="px-4 py-1.5 rounded-full text-white shadow" style="background:#43A047;">✅ Benar: <span id="score-correct">0</span></span> 
+       <span class="px-4 py-1.5 rounded-full text-white shadow" style="background:#E53935;">❌ Salah: <span id="score-wrong">0</span></span>
+   </div>
+   
    <main class="flex-1 w-full max-w-xl px-4 flex flex-col items-center justify-center">
-    <div id="question-area" class="w-full bg-white rounded-3xl shadow-xl p-6 md:p-8 flex flex-col items-center gap-5 bounce-in" style="border: 4px solid #FFD54F;"><!-- Numbers Display -->
+    <div id="question-area" class="w-full bg-white rounded-3xl shadow-xl p-6 md:p-8 flex flex-col items-center gap-5 bounce-in" style="border: 4px solid #00ACC1;">
      <div class="flex items-center justify-center gap-4 flex-wrap">
-      <div id="left-box" class="number-box text-5xl shadow-lg" style="background: linear-gradient(135deg, #FFCDD2, #EF9A9A); color: #C62828;">
+      <div id="left-box" class="number-box text-5xl shadow-lg" style="background: linear-gradient(135deg, #FFF59D, #FFF176); color: #F57F17;">
        5
       </div>
-      <div class="text-5xl font-bold float-anim" style="color: #FFB300;">
+      <div class="text-5xl font-bold float-anim" style="color: #D81B60;">
        ?
       </div>
-      <div id="right-box" class="number-box text-5xl shadow-lg" style="background: linear-gradient(135deg, #B3E5FC, #81D4FA); color: #0277BD;">
+      <div id="right-box" class="number-box text-5xl shadow-lg" style="background: linear-gradient(135deg, #A5D6A7, #81C784); color: #1B5E20;">
        3
       </div>
-     </div><!-- Answer Buttons -->
-     <div class="flex gap-4 mt-2"><button onclick="answer('<')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #42A5F5, #1E88E5);"> &lt; </button> <button onclick="answer('=')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #FFA726, #FB8C00);"> = </button> <button onclick="answer('>')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #66BB6A, #43A047);"> &gt; </button>
      </div>
-    </div><!-- Feedback Message -->
-    <div id="feedback" class="mt-5 text-center text-2xl font-bold min-h-[40px]" aria-live="polite"></div><!-- Next Button --> <button id="next-btn" onclick="newQuestion()" class="mt-3 mb-6 px-8 py-3 rounded-full text-xl font-bold text-white shadow-lg btn-answer hidden" style="background: linear-gradient(135deg, #AB47BC, #8E24AA);"> Soal Berikutnya ➡️ </button>
+     
+     <div class="flex gap-4 mt-2">
+         <button onclick="answer('<')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #26C6DA, #00ACC1);"> &lt; </button> 
+         <button onclick="answer('=')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #FFCA28, #FFB300);"> = </button> 
+         <button onclick="answer('>')" class="btn-answer w-20 h-20 rounded-2xl text-4xl font-bold text-white shadow-lg" style="background: linear-gradient(135deg, #AB47BC, #8E24AA);"> &gt; </button>
+     </div>
+    </div>
+    
+    <div id="feedback" class="mt-5 text-center text-2xl font-bold min-h-[40px]" aria-live="polite"></div>
+    
+    <button id="next-btn" onclick="newQuestion()" class="mt-3 mb-6 px-8 py-3 rounded-full text-xl font-bold text-white shadow-lg btn-answer hidden" style="background: linear-gradient(135deg, #EF5350, #E53935);"> Soal Berikutnya ➡️ </button>
    </main>
   </div>
+
   <script>
   const defaultConfig = {
     app_title: "Bandingkan Bilangan",
     correct_message: "Hebat! Jawabanmu Benar! 🎉",
     wrong_message: "Coba Lagi ya! 💪",
-    primary_color: "#FF6B6B",
+    primary_color: "#E65100",
     surface_color: "#FFFFFF",
-    text_color: "#4A148C",
-    action_color: "#42A5F5",
-    accent_color: "#66BB6A"
+    text_color: "#00695C",
+    action_color: "#00ACC1",
+    accent_color: "#8E24AA"
   };
 
   let currentMode = 'angka';
@@ -132,7 +148,7 @@
       b.style.outlineOffset = '0';
     });
     const active = document.getElementById('mode-' + mode);
-    active.style.outline = '4px solid #FFD54F';
+    active.style.outline = '4px solid #00ACC1';
     active.style.outlineOffset = '3px';
     newQuestion();
   }
@@ -255,6 +271,6 @@
   // Init
   setMode('angka');
   lucide.createIcons();
-</script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ec71dde934ab5b2',t:'MTc3NjIxNTkxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  </script>
+ </body>
 </html>
